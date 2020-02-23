@@ -73,31 +73,10 @@
 				<em class="fa fa-navicon">&nbsp;</em> Service Areas <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-plus"></em></span>
 				</a>
 				<ul class="children collapse" id="sub-item-1">
-					<li><a class="" href="totals.jsp">
-					<span class="fa fa-twitch">&nbsp;</span> HTS Positive
-					</a></li>
-                                        <li><a class="" href="pns.jsp?">
-						<span class="fa fa-certificate">&nbsp;</span> PNS for New positives
-					</a></li>
-					<li><a class="" href="pns.jsp">
-						<span class="fa fa-vk">&nbsp;</span> PNS for High VLs
-					</a></li>
 					
 				</ul>
 			</li>
-			<li class="parent "><a data-toggle="collapse" href="#sub-item-2">
-				<em class="fa fa-navicon">&nbsp;</em> Reports <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-plus"></em></span>
-				</a>
-				<ul class="children collapse" id="sub-item-2">
-					<li><a class="" href="reports_filter.jsp">
-						<span class="fa fa-area-chart">&nbsp;</span> Visit Reports
-					</a></li>
-					<li><a class="" href="partners_report">
-						<span class="fa fa-pie-chart">&nbsp;</span> Partners & Obligations
-					</a></li>
-					
-				</ul>
-			</li>
+			
                        <li><a href="user_profile.jsp"><em class="fa fa-user-md">&nbsp;</em> User Profile</a></li>
 			<li><a href="logout"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
 		</ul>

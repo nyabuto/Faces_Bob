@@ -6,9 +6,10 @@
 package SMSAPI;
 
 import Database.dbConn;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,8 +50,20 @@ int response_code;
             message=sender=all_error_message="";
             all_errors=0;
             
-         // sms = request.getParameter("sms");
-          sms="{\"message\":\"C081 HTSP T9 P4 PNS4 L4 END C081 PNSMAT IND1 INDSC1 CL15 CLE10 CKP5 T7 P4  L4 \",\"sender\":\"+254780698944\"}";
+//            sms = request.getParameter("json");
+                BufferedReader in = new BufferedReader(
+                 new InputStreamReader(request.getInputStream()));
+         String inputLine;
+         StringBuffer res = new StringBuffer();
+         while ((inputLine = in.readLine()) != null) {
+            res.append(inputLine);
+         }
+         in.close();
+         
+            System.out.println("res : "+res);
+         sms = res.toString();
+            System.out.println("sms :"+sms);
+//          sms="{\"message\":\"C084 HTSP T26 P1 PNS1 L1 END C084 PNSANC IND1 INDSC1 CL5 CLE3 CKP2 T1 P1  L1 \",\"sender\":\"+254725627847\"}";
         //  sms="{\"message\":\"C098 HTSP T12 P3 F1 PNS2 L2 OD1\",\"sender\":\"+254780698944\"}";
             JSONParser parser = new JSONParser();
             try{

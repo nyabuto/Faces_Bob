@@ -92,20 +92,7 @@ String id=request.getParameter("id");
   
 				</ul>
 			</li>
-			<li class="parent "><a data-toggle="collapse" href="#sub-item-2">
-				<em class="fa fa-navicon">&nbsp;</em> Reports <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-plus"></em></span>
-				</a>
-				<ul class="children collapse" id="sub-item-2">
-					<li><a class="" href="reports_filter.jsp">
-						<span class="fa fa-area-chart">&nbsp;</span> Visit Reports
-					</a></li>
-					<li><a class="" href="partners_report">
-						<span class="fa fa-pie-chart">&nbsp;</span> Partners & Obligations
-					</a></li>
-					
-				</ul>
-			</li>
-                       <li><a href="user_profile.jsp"><em class="fa fa-user-md">&nbsp;</em> User Profile</a></li>
+			<li><a href="user_profile.jsp"><em class="fa fa-user-md">&nbsp;</em> User Profile</a></li>
 			<li><a href="logout"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
 		</ul>
 	</div><!--/.sidebar-->
@@ -120,9 +107,14 @@ String id=request.getParameter("id");
 				<li class="active">Dashboard</li>
 			</ol>
 		</div><!--/.row-->
+                <br/>
+                <div style="font-weight: 900; text-align: center; font-size: 20px; color: #0088cc;" id="area">
+                   </div>
+                <br/>
                 <div style="font-weight: 900; text-align: center; font-size: 18px;" id="service_area">
-                   
-                    </div>
+                   </div>
+                
+                
 <div id="al">
     <table id="data_table"  class="display cell-border row-border" style="width:100%">
        <thead id="header">
@@ -199,10 +191,11 @@ String id=request.getParameter("id");
          var response = raw_data.response;
          var data = response.data;
          var header = response.header;
-         
-         
+         var area = response.area;
          var service_area = response.service_area;
-         $("#service_area").html("<b style='color:red;'>Service Area:</b> <b style='color:blue;'>"+service_area+"</b>");
+                  
+         $("#area").html("Daily HTS Results by "+area+"<b style='color:red;'> in </b> <b style='color:blue;'>"+service_area+"</b>");
+//         $("#service_area").html("<b style='color:red;'>Service Area:</b> <b style='color:blue;'>"+service_area+"</b>");
          document.title=service_area;
          
         

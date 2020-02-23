@@ -129,20 +129,7 @@
   
 				</ul>
 			</li>
-			<li class="parent "><a data-toggle="collapse" href="#sub-item-2">
-				<em class="fa fa-navicon">&nbsp;</em> Reports <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-plus"></em></span>
-				</a>
-				<ul class="children collapse" id="sub-item-2">
-					<li><a class="" href="reports_filter.jsp">
-						<span class="fa fa-area-chart">&nbsp;</span> Visit Reports
-					</a></li>
-					<li><a class="" href="partners_report">
-						<span class="fa fa-pie-chart">&nbsp;</span> Partners & Obligations
-					</a></li>
-					
-				</ul>
-			</li>
-                       <li><a href="user_profile.jsp"><em class="fa fa-user-md">&nbsp;</em> User Profile</a></li>
+			 <li><a href="user_profile.jsp"><em class="fa fa-user-md">&nbsp;</em> User Profile</a></li>
 			<li><a href="logout"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
 		</ul>
 	</div><!--/.sidebar-->

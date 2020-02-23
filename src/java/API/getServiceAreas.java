@@ -47,7 +47,7 @@ public class getServiceAreas extends HttpServlet {
             
             name=conn.rs.getString(3);
             if(name.length()>21){
-                name=name.substring(0, 21)+"...";
+                name=name.substring(0, 17)+"...";
             }
             
             ob.put("name", name);
