@@ -24,6 +24,14 @@
         <servlet-name>load_daily_summary</servlet-name>
         <servlet-class>API.load_daily_summary</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>getIndicators</servlet-name>
+        <servlet-class>API.getIndicators</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>update_user</servlet-name>
+        <servlet-class>API.update_user</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ReceiveSMS</servlet-name>
         <url-pattern>/ReceiveSMS</url-pattern>
@@ -47,6 +55,14 @@
     <servlet-mapping>
         <servlet-name>load_daily_summary</servlet-name>
         <url-pattern>/load_daily_summary</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>getIndicators</servlet-name>
+        <url-pattern>/getIndicators</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>update_user</servlet-name>
+        <url-pattern>/update_user</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

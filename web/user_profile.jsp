@@ -14,20 +14,22 @@
 	<link href="css/styles.css" rel="stylesheet">
         
         	<link href="css/bootstrap.min.css" rel="stylesheet">
+      <link href="css/components.css" rel="stylesheet" type="text/css">
 	<link href="css/font-awesome.min.css" rel="stylesheet">
 	<link href="css/datepicker3.css" rel="stylesheet">
 	<link href="css/styles.css" rel="stylesheet">
         <link href="dataTables/datatables.css" rel="stylesheet">
-        <!--<link href="dataTables/Buttons-1.5.1/css/buttons.dataTables.min.css" rel="stylesheet">-->
+        <link href="dataTables/Buttons-1.5.1/css/buttons.dataTables.min.css" rel="stylesheet">
         <link href="dataTables/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
         <link href="tables/styles.css" rel="stylesheet">
-        <!--<link href="css/components.css" rel="stylesheet" type="text/css">-->
 	<!--Custom Font-->
 	<link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
        
 </head>
 <body>
- 	<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+    
+ <div class="topmenu">
+	<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sidebar-collapse"><span class="sr-only">Toggle navigation</span>
@@ -38,11 +40,11 @@
                                           Calendar cal = Calendar.getInstance();  
                                           int year= cal.get(Calendar.YEAR);    
                                             %>
-				<a class="navbar-brand" href="#"><span>Bob Tu System</span> | FACES <%=year%> </a>
+				<a class="navbar-brand" href="#"><span>Bob Tu</span> | <%=year%> </a>
 			</div>
 		</div><!-- /.container-fluid -->
 	</nav>
-                        
+           </div>   
 <div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
 		<div class="profile-sidebar">
 			<div class="profile-userpic">
@@ -63,7 +65,7 @@
                            <img src="images/unknown_user.png" class="img-responsive fa-user" alt="">
                             <%}%>
 			</div>
-			<div class="profile-usertitle">
+                        <div class="profile-usertitle" style="color:black;">
                             <%if(session.getAttribute("fullname")!=null){%>
                             <div class="profile-usertitle-name" style="font-size: 13px; text-decoration: underline;"><b>Title: </b><%=session.getAttribute("user_type_name").toString()%></div>
 				<div class="profile-usertitle-name"  style="font-size: 13px;"><%=session.getAttribute("fullname").toString()%></div>
@@ -77,8 +79,7 @@
 		</div>
 		<div class="divider"></div>
 		<ul class="nav menu">
-                     <li><a href="home.jsp"><em class="fa fa-home">&nbsp;</em>Home</a></li>
-                     
+                    <li><a href="home.jsp"><em class="fa fa-home">&nbsp;</em>Home</a></li>
 			<li class="parent "><a data-toggle="collapse" href="#sub-item-1">
 				<em class="fa fa-navicon">&nbsp;</em> Service Areas <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-plus"></em></span>
 				</a>
@@ -89,7 +90,7 @@
   
 				</ul>
 			</li>
-			 <li><a href="user_profile.jsp"><em class="fa fa-user-md">&nbsp;</em> User Profile</a></li>
+			<li><a href="user_profile.jsp"><em class="fa fa-user-md">&nbsp;</em> User Profile</a></li>
 			<li><a href="logout"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
 		</ul>
 	</div><!--/.sidebar-->
@@ -107,12 +108,12 @@
                 <br>
         <div class="row"> 
                     <div class="col-md-12"> 
-                        <form id="" method="post" action="update_user" class="form-horizontal"> 
+                        <form id="" method="post" action="#" class="form-horizontal"> 
                            
                               <div class="form-group"> 
                                 <label class="col-md-4 control-label">Full Name <b style=\"color:red\">*</b> : </label> 
                                 <div class="col-md-8"> 
-                                    <input id="fullname" required name="fullname" type="text" value="" placeholder="Enter fullname" class="form-control" style="width:60%;"> 
+                                    <input id="fullname" required name="fullname" type="text" value="<%if(session.getAttribute("fullname")!=null){out.println(session.getAttribute("fullname").toString());}%>" placeholder="Enter fullname" readonly class="form-control" style="width:60%;" > 
                                 </div> 
                             </div> 
                             
@@ -120,15 +121,15 @@
                               <div class="form-group"> 
                                 <label class="col-md-4 control-label">UserName <b style=\"color:red\">*</b> : </label> 
                                 <div class="col-md-8"> 
-                                    <input id="username" required name="username" type="text" value="" placeholder="Enter UserName" readonly class="form-control"  style="width:60%;"> 
+                                    <input id="username" required name="username" type="text" value="<%if(session.getAttribute("username")!=null){out.println(session.getAttribute("username").toString());}%>" placeholder="Enter UserName" readonly class="form-control"  style="width:60%;"> 
                                 </div> 
                             </div> 
                             
                            
                               <div class="form-group"> 
-                                <label class="col-md-4 control-label">Phone Number <b style=\"color:red\">*</b> : </label> 
+                                <label class="col-md-4 control-label">Phone Number <b style=\"color:red\"></b> : </label> 
                                 <div class="col-md-8"> 
-                                    <input id="phone" required name="phone" type="text" value="" placeholder="Enter Phone" class="form-control"  style="width:60%;"> 
+                                    <input id="phone" name="phone" type="text" value="<%if(session.getAttribute("phone")!=null){out.println(session.getAttribute("phone").toString());}%>" placeholder="Enter Phone" class="form-control"  readonly style="width:60%;"> 
                                 </div> 
                             </div> 
                             
@@ -136,9 +137,9 @@
                               <div class="form-group"> 
                                 <label class="col-md-4 control-label">Gender <b style=\"color:red\">*</b> : </label> 
                                 <div class="col-md-8"> 
-                                    <select id="gender" required name="gender" class="form-control" required  style="width:60%;">
-                                    <option value=\"f\">Female</option>
-                                    <option value=\"m\">Male</option>
+                                    <select id="gender" required name="gender" class="form-control" readonly style="width:60%;">
+                                        <option value="f" <%if(session.getAttribute("gender")!=null){if(session.getAttribute("gender").toString().equalsIgnoreCase("f")){%>selected<%}}%>>Female</option>
+                                    <option value="m" <%if(session.getAttribute("gender")!=null){if(session.getAttribute("gender").toString().equalsIgnoreCase("m")){%>selected<%}}%>>Male</option>
                                     </select> 
                                 </div> 
                             </div> 
@@ -163,7 +164,7 @@
                               <div class="form-group"> 
                                 <label class="col-md-4 control-label"></label> 
                                 <div class="col-md-8"> 
-                                 <input id="" required name="" type="submit" value="Update Profile" placeholder="Repeat Password" class="form-control btn btn-info"  style=" margin-left:20%; width:20%;"> 
+                                 <input id="" required name="" type="submit" value="Update Password" placeholder="Repeat Password" class="form-control btn btn-info"  style=" margin-left:20%; width:20%;"> 
                                 </div> 
                             </div> 
                             
@@ -208,79 +209,46 @@
 } ); 
     </script>
     
-    <%if(session.getAttribute("message")!=null && session.getAttribute("code")!=null){
-    String message = session.getAttribute("message").toString();
-    String code =  session.getAttribute("code").toString();
-    String theme="";
-    if(code.equals("1")){
-     theme="bg-success" ;  
-    }
-    else{
-     theme="bg-danger";   
-    }
-    %>
-     <script type="text/javascript">
-     $.jGrowl('<%=message%>', {
-        position: 'top-center',
-        header: 'info',
-        theme: '<%=theme%>'
-     });
-    </script>
-    <% 
-        session.removeAttribute("message");
-        session.removeAttribute("code");}
-    %>
     
     <script>
+    $("form").submit(function(e){
+
+      var form_data = $("form").serialize();
+                var theme="";
+                var url = "update_user";
+                   $.post(url,form_data , function(output) {
+                                    var code = JSON.parse(output).code;
+                                    var header = JSON.parse(output).message;
+                                    var description = JSON.parse(output).description;
+                                    
+                                    if(code==1){
+                                        theme = "bg-success";
+                                    }
+                                    else{
+                                       theme = "bg-danger";  
+                                    }
+                                    
+                                    $.jGrowl('close');
+                                    
+                                  $.jGrowl(description, {
+                                        position: 'top-center',
+                                        header: header,
+                                        theme: theme
+                                   }); 
+                               
+                                 });
+        e.preventDefault();
+    });   
+    </script>
+    <script>
    $(document).ready(function() {
-        load_users();
+         load_areas();
     });
     
-    function load_users(){
-            $.ajax({
-        url:'load_profile',
-        type:"post",
-        dataType:"json",
-        success:function(raw_data){
-            var position=0,id,fullname,email,phone,level,level_label,status,status_label,gender,gender_label,output="";
-             var dataSet=[];
-        var data=raw_data.data;
-            position++;
-            id=fullname=email=phone=level=level_label=status=status_label=gender=gender_label="";
-            if( data.fullname!=null){fullname = data.fullname;}
-            if( data.email!=null){email = data.email;}
-            if( data.phone!=null){phone = data.phone;}
-            if( data.level!=null){level = data.level;}
-            if( data.status!=null){status = data.status;}
-            if( data.gender!=null){gender = data.gender;}
-            
-            if(gender=="m"){
-               gender_label = '<option value="f">Female</option> '; 
-               gender_label += '<option value="m" selected>Male</option> '; 
-            }
-            else if(gender=="f"){
-             gender_label = '<option value="f" selected>Female</option> '; 
-             gender_label += '<option value="m">Male</option> '; 
-            }
-            else{
-             gender_label = '<option value="">Select Gender</option> '; 
-             gender_label += '<option value="f">Female</option> '; 
-             gender_label += '<option value="m">Male</option> ';     
-            }
-            $("#fullname").val(fullname);
-            $("#email").val(email);
-            $("#phone").val(phone);
-            $("#gender").html(gender_label);
-
-    }
-    });
-    }
+  
 
     </script>
     	<script>
-   $(document).ready(function() {
-   load_areas();
-   
      function load_areas(){
        $.ajax({
         url:'getServiceAreas',
@@ -303,7 +271,6 @@
         }
   });   
     }
-}); 
     </script>
 </body>
 </html>

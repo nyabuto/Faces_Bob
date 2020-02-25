@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
 public class login extends HttpServlet {
 
 HttpSession session;
-String id,password,fullname,username,phone,pass,nextPage,message,user_type_id,user_type_name,gender;
+String id,password,fullname,username,phone,pass,nextPage,message,user_type_id,user_type_name,gender,pn_id;
 MessageDigest m;
 int code;
 
@@ -47,9 +47,10 @@ int code;
        
        String login = 
                "SELECT u.id,concat_ws(\" \",pn.given_name,pn.middle_name,pn.sur_name) AS FullName,"+
-               "u.username AS username,u.user_type_id as user_type,ut.name AS UserTypeName, pn.gender  " +
+               "u.username AS username,u.user_type_id as user_type,ut.name AS UserTypeName, pn.gender,pn.id,ifnull(c.phone,'') AS Phoneno  " +
                "FROM user u INNER JOIN person_name pn ON u.person_name_id=pn.id AND u.status=1 AND pn.status=1 " +
-               "INNER JOIN user_type ut ON u.user_type_id=ut.id WHERE u.username=? AND u.password=?";
+               "INNER JOIN user_type ut ON u.user_type_id=ut.id "
+               + "LEFT OUTER JOIN counsellor c ON pn.id=c.id WHERE u.username=? AND u.password=?";
        conn.pst = conn.conn.prepareStatement(login);
        conn.pst.setString(1, username);
        conn.pst.setString(2, password);
@@ -62,7 +63,10 @@ int code;
         user_type_id = conn.rs.getString(4);
         user_type_name = conn.rs.getString(5);
         gender = conn.rs.getString(6);
+        pn_id = conn.rs.getString(7);
+        phone = conn.rs.getString(8);
 
+        
         
         
         session.setAttribute("id", id);
@@ -71,6 +75,8 @@ int code;
         session.setAttribute("user_type_id", user_type_id);
         session.setAttribute("user_type_name", user_type_name);
         session.setAttribute("gender", gender);
+        session.setAttribute("pn_id", pn_id);
+        session.setAttribute("phone", phone);
 
         nextPage =  "home.jsp";    
         

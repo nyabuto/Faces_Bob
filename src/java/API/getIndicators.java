@@ -23,50 +23,42 @@ import org.json.simple.JSONObject;
  *
  * @author Geofrey Nyabuto
  */
-public class getServiceAreas extends HttpServlet {
+public class getIndicators extends HttpServlet {
     HttpSession session;
-    String id,code,name;
-    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        
-        System.out.println("entered here");
-        
-        JSONObject obj = new JSONObject();
-        JSONArray arry = new JSONArray();
+       
         session = request.getSession();
         dbConn conn = new dbConn();
         
-        if(session.getAttribute("id")!=null){
-        String getareas = "SELECT id,code,fullname FROM service_area where program_area_id=1 and is_active=1 order by id";
-        conn.rs = conn.st.executeQuery(getareas);
+        
+        JSONArray array = new JSONArray();
+        JSONObject fn_obj = new JSONObject();
+        
+        array.clear();
+        fn_obj.clear();
+        
+        String get_indicators = "SELECT id,code,fullname,ifnull(description,''),is_non_linkage_reason,indicator_type_id FROM indicator WHERE is_active=1 AND is_indicator=1 ORDER BY order_id";
+        conn.rs = conn.st.executeQuery(get_indicators);
         while(conn.rs.next()){
-           
-            JSONObject ob = new JSONObject();
-            ob.put("id", conn.rs.getInt(1));
-            ob.put("code", conn.rs.getString(2));
-            ob.put("fullname", conn.rs.getString(3));
+            JSONObject obj = new JSONObject();
+            obj.put("id", conn.rs.getString(1));
+            obj.put("code", conn.rs.getString(2));
+            obj.put("fullname", conn.rs.getString(3));
+            obj.put("description", conn.rs.getString(4));
+            obj.put("is_non_linkage_reason", conn.rs.getString(5));
+            obj.put("indicator_type_id", conn.rs.getString(6));
             
-            name=conn.rs.getString(3);
-            if(name.length()>21){
-                name=name.substring(0, 17)+"...";
-            }
+            array.add(obj);
             
-            ob.put("name", name);
-            
-            arry.add(ob);
         }
         
-        obj.put("data", arry);
         
-      
-        out.print(obj);
-        }
-        else{
-            System.out.println("Login to continue using this system");
-        }
+        
+        fn_obj.put("indicators", array);
+        out.println(fn_obj);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -84,7 +76,7 @@ public class getServiceAreas extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(getServiceAreas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(getIndicators.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -102,7 +94,7 @@ public class getServiceAreas extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(getServiceAreas.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(getIndicators.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

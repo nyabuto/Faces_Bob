@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,7 +47,7 @@ public class get_service_area_data extends HttpServlet {
               
               case 1:
                  get_area_id="SELECT c.id as c_id,concat(concat_ws(\" \", pn.given_name,pn.middle_name,pn.sur_name),\" [\",c.code,\"]\") AS CounsellorName FROM user u INNER JOIN counsellor c ON u.person_name_id=c.id  AND u.id in("+session.getAttribute("id").toString()+") "
-                         + "INNER JOIN person_name pn ON pn.id=u.person_name_id=pn.id";
+                         + "INNER JOIN person_name pn ON u.person_name_id=pn.id";
                   conn.rs = conn.st.executeQuery(get_area_id);
                   if(conn.rs.next()){
                       area_id=" c.id in("+conn.rs.getString(1)+")";
@@ -87,13 +90,21 @@ public class get_service_area_data extends HttpServlet {
         HashMap<String,String> indicator_labels = new HashMap<String, String>();
         indicator_labels.clear();
         
+            ArrayList <HashMap<String,String>> nlinkage = new ArrayList();
+            nlinkage.clear();
+        
         // get indicator labels 
-        String labels="SELECT code,fullname from indicator WHERE is_active=1";
+        String labels="SELECT code,fullname,is_non_linkage_reason from indicator WHERE is_active=1";
         conn.rs = conn.st.executeQuery(labels);
         while(conn.rs.next()){
          indicator_labels.put(conn.rs.getString(1), conn.rs.getString(2));
+         if(conn.rs.getInt(3)==1){
+          HashMap<String,String> non_linkage_reasons = new HashMap<String, String>();   
+          non_linkage_reasons.put("code", conn.rs.getString(1));   
+          non_linkage_reasons.put("fullname", conn.rs.getString(2));  
+          nlinkage.add(non_linkage_reasons);
         }
-        
+        }
         //get service area name
         String service_area = "SELECT code,fullname FROM service_area WHERE id in(?)";
         conn.pst = conn.conn.prepareStatement(service_area);
@@ -117,9 +128,9 @@ public class get_service_area_data extends HttpServlet {
 //                + "f.mflcode AS 'MFL Code',\n" +
 //            "c.code AS 'Counsellor Code',"+
           if(!user_level.equals("1")){
-                 get_data+="concat_ws(\" \", pn.given_name,pn.middle_name,pn.sur_name) as 'Counsellor Name', \n"+
-                  "d.phone AS PhoneNumber,";
+                 get_data+="concat_ws(\" \", pn.given_name,pn.middle_name,pn.sur_name) as 'Counsellor Name', \n";
                         }
+                 get_data +="d.phone AS 'Data Source',";
 //            "pa.name AS ProgramArea,"+
                 // "sa.code AS ServiceAreaCode,"+
                 // "sa.fullname AS ServiceAreaName,  \n" +
@@ -139,22 +150,17 @@ public class get_service_area_data extends HttpServlet {
             get_data+="SUM(CASE WHEN i.code in(\"F\") THEN d.achieved ELSE 0 END) AS 'F',\n" +
             "SUM(CASE WHEN i.code in(\"PNS\") THEN d.achieved ELSE 0 END) AS 'PNS',\n";
             }
-           get_data+= "concat(1,\":\",ROUND(SUM(CASE WHEN i.code in(\"T\") THEN d.achieved ELSE 0 END)/SUM(CASE WHEN i.code in(\"P\") THEN d.achieved ELSE 0 END),0)) as 'Positivity Rate',\n" +
-            "SUM(CASE WHEN i.code in(\"L\") THEN d.achieved ELSE 0 END) AS 'L',\n" +
-            "SUM(CASE WHEN i.code in(\"NR\") THEN d.achieved ELSE 0 END) AS 'NR',\n" +
-            "SUM(CASE WHEN i.code in(\"AH\") THEN d.achieved ELSE 0 END) AS 'AH',\n" +
-            "SUM(CASE WHEN i.code in(\"KP\") THEN d.achieved ELSE 0 END) AS 'KP',\n" +
-            "SUM(CASE WHEN i.code in(\"WL\") THEN d.achieved ELSE 0 END) AS 'WL',\n" +
-            "SUM(CASE WHEN i.code in(\"DL\") THEN d.achieved ELSE 0 END) AS 'DL',\n" +
-            "SUM(CASE WHEN i.code in(\"DC\") THEN d.achieved ELSE 0 END) AS 'DC',\n" +
-            "SUM(CASE WHEN i.code in(\"PV\") THEN d.achieved ELSE 0 END) AS 'PV',\n" +
-            "SUM(CASE WHEN i.code in(\"MT\") THEN d.achieved ELSE 0 END) AS 'MT',\n" +
-            "SUM(CASE WHEN i.code in(\"WP\") THEN d.achieved ELSE 0 END) AS 'WP',\n" +
-            "SUM(CASE WHEN i.code in(\"OD\") THEN d.achieved ELSE 0 END) AS 'OD',\n" +
-            "SUM(CASE WHEN i.code in(\"RE\") THEN d.achieved ELSE 0 END) AS 'RE',\n" +
-            "SUM(CASE WHEN i.code in(\"TD\") THEN d.achieved ELSE 0 END) AS 'TD' \n" +
+           get_data+= "concat(1,\":\",ROUND(SUM(CASE WHEN i.code in(\"T\") THEN d.achieved ELSE 0 END)/SUM(CASE WHEN i.code in(\"P\") THEN d.achieved ELSE 0 END),0)) as 'Positivity Rate',\n";
+           
+            for (HashMap<String,String>nlinkage1:nlinkage ) {
+                 get_data += "SUM(CASE WHEN i.code in(\"" + nlinkage1.get("code") + "\") THEN d.achieved ELSE 0 END) AS '" + nlinkage1.get("fullname") + "',";     
+                
+            }
+           
+            get_data = get_data.substring(0, get_data.length()-1);
+         
 //            "d.timestamp AS Timestamp  \n" +
-            "FROM data d INNER JOIN indicator i ON d.indicator_id=i.id \n" +
+            get_data+=" FROM data d INNER JOIN indicator i ON d.indicator_id=i.id \n" +
             "INNER JOIN service_area sa ON d.service_area_id=sa.id  AND sa.id IN("+sa_id+")\n" +
             "INNER JOIN program_area pa ON sa.program_area_id=pa.id \n" +
             "INNER JOIN counsellor c ON d.counsellor_id=c.id \n";
@@ -166,8 +172,10 @@ public class get_service_area_data extends HttpServlet {
             "INNER JOIN management_area ma ON sc.mgt_id=ma.id\n";
                     if(user_level.equals("3")){get_data+=" AND "+area_id+" ";}
             get_data+=" group by d.date,c.id,sa.id,ma.id \n" +
-            " ORDER BY d.date DESC,d.timestamp DESC limit 31";
+            " ORDER BY d.date DESC,d.timestamp DESC ";
         
+            
+            System.out.println(get_data);
         conn.rs = conn.st.executeQuery(get_data);
         
         // get db column labels
@@ -252,4 +260,11 @@ public class get_service_area_data extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+        public String get_today_date(){
+        String date = "";
+        SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-dd");
+        Calendar dt = Calendar.getInstance();
+        date = df.format(dt.getTime());
+        return date;
+    }
 }

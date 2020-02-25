@@ -47,12 +47,14 @@ public class load_daily_summary extends HttpServlet {
         if(session.getAttribute("user_type_id")!=null){
            
          user_level = session.getAttribute("user_type_id").toString();
+            System.out.println("level :"+user_level);
           switch(Integer.parseInt(user_level)){
               
               case 1:
                   group_by="group by c.id";
                  get_area_id="SELECT c.id as c_id,concat(concat_ws(\" \", pn.given_name,pn.middle_name,pn.sur_name),\" [\",c.code,\"]\") AS CounsellorName FROM user u INNER JOIN counsellor c ON u.person_name_id=c.id  AND u.id in("+session.getAttribute("id").toString()+") "
-                         + "INNER JOIN person_name pn ON pn.id=u.person_name_id=pn.id";
+                         + "INNER JOIN person_name pn ON u.person_name_id=pn.id";
+                  System.out.println("get area id : "+get_area_id);
                   conn.rs = conn.st.executeQuery(get_area_id);
                   if(conn.rs.next()){
                       area_id=" c.id in("+conn.rs.getString(1)+")";
@@ -126,7 +128,7 @@ public class load_daily_summary extends HttpServlet {
               
         }
         else{
-            
+            System.out.println("missed id");  
         }
       
         System.out.println("obj data: "+ obj); 

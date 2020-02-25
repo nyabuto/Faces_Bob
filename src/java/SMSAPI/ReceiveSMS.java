@@ -21,6 +21,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -29,7 +30,8 @@ import org.json.simple.parser.JSONParser;
  * @author Geofrey Nyabuto
  */
 public class ReceiveSMS extends HttpServlet {
-String sms,message,sender;
+    HttpSession session;
+String sms,message,sender,build_data;
 dbConn conn = new dbConn();
 String sa_id,sa_code,counsellor_id,counsellor_code,facility_id;
 String indicator_data;
@@ -39,20 +41,90 @@ String all_error_message,error_message="";
 String today;
 String counsellor_indic_id="1";
 String response_message,response_description;
-int response_code;
+int response_code,data_elems_counter;
+String source,pn_id,user_type_id,c_code;
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
+            session = request.getSession();
          indicator_codes = get_all_indicators(); // method to get all indicators and push them to hashmap
          today = get_today_date(); // method to get today's date                    
             message=sender=all_error_message="";
-            all_errors=0;
+            data_elems_counter = all_errors=0;
+            response_code=222;
             
+            
+            if(request.getParameter("sa_id")!=null){
+                source="web";
+                sa_id=request.getParameter("sa_id");
+                build_data = "";
+                
+                if(session.getAttribute("pn_id")!=null && session.getAttribute("user_type_id")!=null){
+                pn_id = session.getAttribute("pn_id").toString();
+                user_type_id = session.getAttribute("user_type_id").toString();
+                String get_counsellor = "SELECT code FROM counsellor WHERE id in("+pn_id+")";
+                conn.rs = conn.st.executeQuery(get_counsellor);
+                if(conn.rs.next()){
+                  c_code="C"+conn.rs.getString(1);
+                }
+                else{
+                    c_code="";
+                }
+                  System.out.println("2");
+                if(!user_type_id.equals("1") || c_code.equals("")){
+                response_code=0;
+                response_message="Failed";
+                response_description="This user is not a counsellor. Only counsellors can send data over web interface."; 
+                }
+                else{
+               String get_area_code="SELECT code FROM service_area WHERE id in("+sa_id+")";
+               conn.rs = conn.st.executeQuery(get_area_code);
+               if(conn.rs.next()){
+                   sa_code=conn.rs.getString(1);
+               }
+               String getelems = "SELECT code FROM indicator";
+               conn.rs = conn.st.executeQuery(getelems);
+               while(conn.rs.next()){
+                   if(request.getParameter(conn.rs.getString(1))!=null){
+                       String dt = request.getParameter(conn.rs.getString(1));
+                       if(!dt.equals("")){
+                           build_data +=conn.rs.getString(1)+""+dt+" ";
+                           data_elems_counter++;
+                       }
+                   }
+               }
+             
+                    System.out.println("data elems counter : "+data_elems_counter);
+                    if(data_elems_counter>0){
+               sms="{\"message\":\""+c_code+" "+sa_code+" "+build_data+" \",\"sender\":\"web\"}";
+                    }
+                    else{
+                        sms=null;
+                    response_code=0;
+                    response_message="Failed";
+                    response_description="No data elements to be added into the system";
+                    }
+                 System.out.println(sms);
+                }
+                }
+                else{
+                    sms="";
+                    response_code=0;
+                    response_message="Failed";
+                    response_description="Failed to authenticate user. Log out and login again";
+                }
+               
+            }
+            
+            
+            
+            else{
+                source="sms";
 //            sms = request.getParameter("json");
-                BufferedReader in = new BufferedReader(
-                 new InputStreamReader(request.getInputStream()));
+         BufferedReader in = new BufferedReader(
+         new InputStreamReader(request.getInputStream()));
          String inputLine;
          StringBuffer res = new StringBuffer();
          while ((inputLine = in.readLine()) != null) {
@@ -62,9 +134,16 @@ int response_code;
          
             System.out.println("res : "+res);
          sms = res.toString();
+            } // end of receiving sms
+         
+         
+         
             System.out.println("sms :"+sms);
 //          sms="{\"message\":\"C084 HTSP T26 P1 PNS1 L1 END C084 PNSANC IND1 INDSC1 CL5 CLE3 CKP2 T1 P1  L1 \",\"sender\":\"+254725627847\"}";
         //  sms="{\"message\":\"C098 HTSP T12 P3 F1 PNS2 L2 OD1\",\"sender\":\"+254780698944\"}";
+            
+            
+            if(response_code!=0){ // if it is missing any important data, discard it 
             JSONParser parser = new JSONParser();
             try{
             JSONObject jsonSMS = (JSONObject) parser.parse(sms);
@@ -140,19 +219,26 @@ int response_code;
               updatesmslog();  
             response_code=1;
             response_message="success";
-            response_description = "Data extracted from the SMS and was saved successfully";
+            if(source.equals("web")){
+            response_description = c_code+"'s data saved successfully. <b style='color: blue;'>"+data_elems_counter+"</b> element(s) saved";
+            }
+            else{
+           response_description = "Data extracted from the SMS and was saved successfully";     
+            }
             }
             else{
             response_code=0;
-            response_message="failed";
+            response_message="Failed";
             response_description = "SMS had errors as described : "+all_error_message;     
             }
+        }
            JSONObject obj = new JSONObject();
            obj.put("code", response_code);
            obj.put("message", response_message);
            obj.put("description", response_description);
+           obj.put("source", source);
             
-      
+            System.out.println(obj);
             out.println(obj);
 //      ************************************************
 //      ***********************END**********************

@@ -17,20 +17,22 @@ String id=request.getParameter("id");
 	<link href="css/styles.css" rel="stylesheet">
         
         	<link href="css/bootstrap.min.css" rel="stylesheet">
+                <link href="css/components.css" rel="stylesheet" type="text/css">
 	<link href="css/font-awesome.min.css" rel="stylesheet">
 	<link href="css/datepicker3.css" rel="stylesheet">
 	<link href="css/styles.css" rel="stylesheet">
         <link href="dataTables/datatables.css" rel="stylesheet">
-        <!--<link href="dataTables/Buttons-1.5.1/css/buttons.dataTables.min.css" rel="stylesheet">-->
+        <link href="dataTables/Buttons-1.5.1/css/buttons.dataTables.min.css" rel="stylesheet">
         <link href="dataTables/icons/icomoon/styles.css" rel="stylesheet" type="text/css">
         <link href="tables/styles.css" rel="stylesheet">
-        <!--<link href="css/components.css" rel="stylesheet" type="text/css">-->
+        
 	<!--Custom Font-->
 	<link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 	
 
 </head>
 <body>
+     <div class="topmenu">
 	<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
 		<div class="container-fluid">
 			<div class="navbar-header">
@@ -42,11 +44,11 @@ String id=request.getParameter("id");
                                           Calendar cal = Calendar.getInstance();  
                                           int year= cal.get(Calendar.YEAR);    
                                             %>
-				<a class="navbar-brand" href="#"><span>Bob Tu System</span> | FACES <%=year%> </a>
+				<a class="navbar-brand" href="#"><span>Bob Tu</span> | <%=year%> </a>
 			</div>
 		</div><!-- /.container-fluid -->
 	</nav>
-                        
+           </div>             
 <div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
 		<div class="profile-sidebar">
 			<div class="profile-userpic">
@@ -104,17 +106,32 @@ String id=request.getParameter("id");
 				<li><a href="#">
 					<em class="fa fa-home"></em>
 				</a></li>
-				<li class="active">Dashboard</li>
+				<li class="active">Service Area</li>
 			</ol>
 		</div><!--/.row-->
                 <br/>
+                <div>
+                    <table>
+                        <tr>
+                            <%if(session.getAttribute("user_type_id")!=null){
+                            if(session.getAttribute("user_type_id").toString().equals("1")){
+                            %> 
+                            <td>
+            <div>
+               <button type="button" class="btn btn-info btn-raised" onclick="add_data();load_indicators();"  style="margin-left: 1%; margin-bottom: 1%; font-weight: 900;"><i class="icon-plus3 position-left"></i> New Data</button>
+           </div>
+                        </td>
+                        
+                        <%}}%>
+                 <td>   
                 <div style="font-weight: 900; text-align: center; font-size: 20px; color: #0088cc;" id="area">
-                   </div>
-                <br/>
-                <div style="font-weight: 900; text-align: center; font-size: 18px;" id="service_area">
-                   </div>
-                
-                
+                   
+                </div>
+                        </td>
+                        </tr>
+                </table>
+                </div>
+                <div id="data"></div>      
 <div id="al">
     <table id="data_table"  class="display cell-border row-border" style="width:100%">
        <thead id="header">
@@ -123,6 +140,7 @@ String id=request.getParameter("id");
         </tbody> 
     </table>
     </div>
+                <p id="sa_header"></p>
 	</div>	<!--/.main-->
         
         </div> <!-- end of contents body -->
@@ -149,6 +167,15 @@ String id=request.getParameter("id");
         <script type="text/javascript" src="js/notifications/jgrowl.min.js"></script>
          <script type="text/javascript" src="js/select2.min.js"></script>
         
+         <script type="text/javascript" language="en">
+   function numbers(evt){
+        var charCode=(evt.which) ? evt.which : event.keyCode
+        if(charCode > 31 && (charCode < 48 || charCode>57))
+        return false;
+        return true;
+  }
+//-->
+</script>
 	<script>
    $(document).ready(function() {
    load_areas();
@@ -195,7 +222,8 @@ String id=request.getParameter("id");
          var service_area = response.service_area;
                   
          $("#area").html("Daily HTS Results by "+area+"<b style='color:red;'> in </b> <b style='color:blue;'>"+service_area+"</b>");
-//         $("#service_area").html("<b style='color:red;'>Service Area:</b> <b style='color:blue;'>"+service_area+"</b>");
+         $("#sa_header").html(service_area);
+         
          document.title=service_area;
          
         
@@ -241,6 +269,151 @@ String id=request.getParameter("id");
         }
   });   
     } 
+    
+    function load_indicators(){
+     var sa_id=parseInt(<%out.println(id);%>);
+    var output_indicators="<div><div style=\"text-align:center; font-weight: 900; font-size: 16px; text-decoration:underline;\">Reportable Indicators</div><br/>";
+    var output_reasons="<div><div style=\"text-align:center; font-weight: 900; font-size: 16px; text-decoration:underline; color:red;\">Reasons for Non-Linkage</div><br/>";
+    
+    if(sa_id!=1){
+       output_indicators+='<div><b style="color:red">Note: </b> <b style="color:blue;">Enter data only for clients whose age is 15+ Years.</b></div><br/>';    
+        
+    }
+     $.ajax({
+        url:'getIndicators',
+        type:"get",
+        dataType:"json",
+        success:function(raw_data){
+         var id,code,fullname,description,is_non_linkage_reason,indicator_type_id;
+         var data = raw_data.indicators;
+  
+         for (var i=0; i<data.length;i++){
+            id="";code="";fullname="";description="";is_non_linkage_reason=0;indicator_type_id=0;
+            
+            if( data[i].id!=null){id = data[i].id;}
+            if( data[i].code!=null){code = data[i].code;}
+            if( data[i].fullname!=null){fullname = data[i].fullname;}
+            if( data[i].description!=null){description = data[i].description;}
+            if( data[i].is_non_linkage_reason!=null){is_non_linkage_reason = data[i].is_non_linkage_reason;}
+            if( data[i].indicator_type_id!=null){indicator_type_id = data[i].indicator_type_id;}
+            
+            
+            if(is_non_linkage_reason==0){
+                if(sa_id==1){
+                  if(indicator_type_id==2 || indicator_type_id==3){
+                   output_indicators+='<div class="form-group">' +
+                                '<label class="col-md-4 control-label">'+fullname+'['+code+']<b style=\"color:red\"></b> : </label>' +
+                                '<div class="col-md-6">' +
+                                    '<input id="'+code+'" required name="'+code+'" onkeypress="return numbers(event)" type="text" value="" maxlength="2" placeholder="Enter data for '+code+'" class="form-control"  style="width:80%;"/>' +
+                                '</div>' +
+                            '</div>';   
+                     }  
+            }
+                else{
+                        
+                  if(indicator_type_id==1 || indicator_type_id==3){     // for pns & both  
+           output_indicators+='<div class="form-group">' +
+                                '<label class="col-md-4 control-label">'+fullname+' 15+ Years ['+code+']<b style=\"color:red\"></b> : </label>' +
+                                '<div class="col-md-6">' +
+                                    '<input id="'+code+'" required name="'+code+'" onkeypress="return numbers(event)" type="text" value="" maxlength="2" placeholder="Enter data for '+code+'" class="form-control"  style="width:80%;"/>' +
+                                '</div>' +
+                            '</div>';
+                }
+                }
+            }
+    else if(is_non_linkage_reason==1){
+        output_reasons+='<div class="form-group">' +
+                                '<label class="col-md-4 control-label">'+fullname.replace("Not Linked: ","")+'['+code+']<b style=\"color:red\"></b> : </label>' +
+                                '<div class="col-md-6">' +
+                                    '<input id="'+code+'" name="'+code+'" onkeypress="return numbers(event)" type="text" value="" maxlength="2" placeholder="Enter data for '+code+'" class="form-control"  style="width:80%;"/>' +
+                                '</div>' +
+                            '</div>';   
+         }  
+        }   
+         // ouput
+        
+    output_indicators +="</div>";
+    output_reasons +="</div>";  
+    
+    
+    // input them into their areas
+    
+    $("#entry_indicators").html(output_indicators);
+    $("#entry_reasons").html(output_reasons);
+     }
+  });
+
+    }
+    
+   
+    function add_data(){    
+  var title = $("#sa_header").html();
+  
+                var dialog = bootbox.dialog({
+    title: '<b style="text-align:center; font-size: 18px; color:#0DF6ED;">'+title+' </b>',
+    message: '<div class="row">' +
+                    '<div class="col-lg-12">' +
+                        '<form id="new_data_entry" method="post" class="form-horizontal">'+
+                            '<input type="hidden" id="sa_id" name="sa_id" value="'+<%out.println(id);%>+'">' +
+                            '<div id="entry_indicators"> </div>' +
+                            '<hr/>'+
+                              '<div id="entry_reasons"> </div>' +
+                             
+                         '</form>' +
+                    '</div>' +
+                    '</div>',
+    buttons: {
+        cancel: {
+            label: "Cancel",
+            className: 'btn-danger',
+            callback: function(){
+                
+            }
+        },
+        ok: {
+            label: "Save",
+            className: 'btn-info',
+            callback: function(){
+                var form_data = $("form").serialize();
+               // $("#data").html(form_data);
+                var theme="",header="",message="";
+                var url = "ReceiveSMS";
+                   $.post(url,form_data , function(output) {
+                                    var code = JSON.parse(output).code;
+                                    var header = JSON.parse(output).message;
+                                    var description = JSON.parse(output).description;
+                                    var source = JSON.parse(output).source;
+                                    
+                                    if(source=="web"){
+                                    if(code==1){
+                                        theme = "bg-success";
+                                       load_data(); 
+                                    }
+                                    else{
+                                       theme = "bg-danger";  
+                                    }
+                                    
+                                    $.jGrowl('close');
+                                    
+                                  $.jGrowl(description, {
+                                        position: 'top-center',
+                                        header: header,
+                                        theme: theme
+                                   }); 
+                               }
+                                 });
+                        
+            }
+        }
+        
+    }
+    
+    });
+    
+    // load all data and push it into dialogue
+    //load_indicators();
+    
+    }
     </script>	
 </body>
 

@@ -49,7 +49,7 @@
 </head>
 <body style="margin-left: 7%;">
     <br><br>
-    <div class="title" style="text-align: center;">Daily HTS Testing Tracking System <br><br>(Bob Tu)</div>
+    <div class="title" style="text-align: center;">HTS Daily Tracking System <br><br>(Bob Tu)</div>
                                 <br>
                                 <div class="row">
             <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4">

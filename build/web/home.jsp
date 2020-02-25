@@ -78,7 +78,7 @@
                                           Calendar cal = Calendar.getInstance();  
                                           int year= cal.get(Calendar.YEAR);    
                                             %>
-				<a class="navbar-brand" href="#"><span>Bob Tu System</span> | FACES <%=year%> </a>
+				<a class="navbar-brand" href="#"><span>Bob Tu</span> | <%=year%> </a>
 			</div>
 		</div><!-- /.container-fluid -->
 	</nav>

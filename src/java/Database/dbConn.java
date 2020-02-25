@@ -40,9 +40,9 @@ public  Connection conn = null;
         System.out.println("in here");
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
-//               conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bob_tu","root", "admin"); // local setup
+               conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bob_tu","root", "admin"); // local setup
 //             conn = DriverManager.getConnection("jdbc:mysql://41.89.200.50:3306/bob_tu","ushauri", "Ushauri!@#"); // remote setup
-             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bob_tu","ushauri", "Ushauri!@#"); // remote setup
+//             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bob_tu","ushauri", "Ushauri!@#"); // remote setup
            
             //if the saved host name is less than 2 letters long, then thats not a genuine host name
 
@@ -57,7 +57,6 @@ public  Connection conn = null;
                 st2 = conn.createStatement();
                 st3 = conn.createStatement();
                 st4 = conn.createStatement();
-
 
                 st_1 = conn.createStatement();
                 st_2 = conn.createStatement();
